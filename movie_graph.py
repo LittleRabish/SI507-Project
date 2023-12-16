@@ -1,6 +1,5 @@
 import json
 from collections import deque
-import random
 
 class Movie_Vertex:
     def __init__(self, movie_id: str, movie_info: dict) -> None:
@@ -69,7 +68,7 @@ def create_movie_graph(file_name: str) -> Movie_Graph:
     with open(file_name, "r") as f:
         movies_json = f.read()
         movies = json.loads(movies_json)
-    print(len(movies), "movies loaded")
+    # print(len(movies), "movies loaded")
     
     graph = Movie_Graph()
     for movie_id, movie_info in movies.items():
@@ -82,8 +81,41 @@ def create_movie_graph(file_name: str) -> Movie_Graph:
     
     return graph
 
+def get_recommendations(graph: Movie_Graph, start_movie_id: str,
+                       genre: str, year_min: int, year_max: int) -> list:
+    """use BFS to search the movie graph and get a list of recommended movies"""
+    visited = set()
+    q = deque()
+    rcmds = []
+    
+    visited.add(start_movie_id)
+    q.append(start_movie_id)
+
+    while q:
+        current_id = q.popleft()
+        current_vertex = graph.get_vertex(current_id)
+        year_str = current_vertex.release_date[:4]
+        if year_str == "":
+            year = 0
+        else:
+            year = int(current_vertex.release_date[:4])
+
+        if genre in current_vertex.genres and year >= year_min and year <= year_max:
+            # print(current_vertex.id, current_vertex.title)
+            rcmds.append(current_vertex)
+        if len(rcmds) == 8:
+            return rcmds
+
+        for nbr_id in current_vertex.get_connections():
+            if nbr_id not in visited:
+                visited.add(nbr_id)
+                q.append(nbr_id)
+    
+    return rcmds
+
 
 if __name__ == "__main__":
     graph = create_movie_graph("movies.json")
     # for movie_id in graph.get_vertex("161445").connected_to:
     #     print(type(movie_id))
+    get_recommendations(graph, "37165", "Animation", 2000, 2009)

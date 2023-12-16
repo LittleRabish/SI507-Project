@@ -1,5 +1,5 @@
 import requests
-
+from api_keys import YOUTUBE_KEY
 
 def search_youtube(query: str) -> dict:
     """
@@ -8,7 +8,7 @@ def search_youtube(query: str) -> dict:
     return a dictionary with video title as key, and url link as value
     """
     url = "https://www.googleapis.com/youtube/v3/search"
-    params = {"key": "AIzaSyAJN9Bo9xK1JBhtKenvPKM6evXNXFoCRH4",
+    params = {"key": YOUTUBE_KEY,
               "part": "snippet",
               "type": "video",
               "q": query,

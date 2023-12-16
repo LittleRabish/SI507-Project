@@ -1,7 +1,7 @@
 import requests
 import json
 from collections import Counter
-
+from api_keys import TMDB_KEY
 
 def get_basic_movies(order_by: str, limit: int):
     """Use the "popular"/"top rated" functions of the TMDB API
@@ -21,7 +21,7 @@ def get_basic_movies(order_by: str, limit: int):
 
     """
     url = "https://api.themoviedb.org/3/movie/" + order_by
-    params = {"api_key": "627a016b527c977f26aa27243b1cf682",
+    params = {"api_key": TMDB_KEY,
               "page": 1}
     movie_ids = []
     while len(movie_ids) < limit:
@@ -56,7 +56,7 @@ def find_related_movies(movie_ids: list, movies: dict):
     related_movies = set()
     for it, movie_id in enumerate(movie_ids):
         url = f"https://api.themoviedb.org/3/movie/{movie_id}"
-        params = {"api_key": "627a016b527c977f26aa27243b1cf682",
+        params = {"api_key": TMDB_KEY,
                   "append_to_response": "similar,recommendations"}
         response = requests.get(url, params=params)
         results = response.json()
@@ -107,7 +107,7 @@ def complete_last_iteration(last_it_ids: list, all_movie_ids: set, movies: dict)
     for it, movie_id in enumerate(last_it_ids):
         if movie_id not in movies:
             url = f"https://api.themoviedb.org/3/movie/{movie_id}"
-            params = {"api_key": "627a016b527c977f26aa27243b1cf682",
+            params = {"api_key": TMDB_KEY,
                       "append_to_response": "similar,recommendations"}
             response = requests.get(url, params=params)
             results = response.json()
